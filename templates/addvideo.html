@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load widget_tweaks %}
 {% block title %}
 Add Video
 {% endblock title %}
@@ -8,9 +8,25 @@ Add Video
 <div class="container">
 <form method="post">
     {% csrf_token %}
-    {{form.as_p}}
-    <button type="submit" class="btn btn-primary">Save</button>
 
+    {% for field in form %}
+    <div class="form-group {% if field.error %}alert-danger {% endif %}">
+        {{ field.errors }}
+        {{ field.label_tag }}
+        {% render_field field class="form-control" %}
+
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">Save</button><br><br>
 </form>
+
+
+    <h3>OR</h3>
+        <form>
+        {{searchform.as_p}}
+        </form>
+
+
+
 </div>
 {% endblock content %}

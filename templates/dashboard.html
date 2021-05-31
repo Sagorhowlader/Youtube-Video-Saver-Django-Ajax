@@ -6,6 +6,9 @@ Dashboard
 
 {% block content %}
 <div class="container">
-{{playlist}}
+{% for data in playlist %}
+    <h1>{{data.title}}</h1><br>
+    <h6 class="muted"> {{data.user}} </h6>
+    {% endfor %}
 </div>
 {% endblock content %}

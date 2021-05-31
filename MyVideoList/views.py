@@ -1,11 +1,17 @@
 from django.contrib.auth.forms import UserCreationForm
+from django.http import Http404
 from django.shortcuts import render, redirect
 from .models import *
 # Create your views here.
 from django.urls import reverse_lazy
 from django.views import generic
 from django.contrib.auth import authenticate, login
-from .forms import VideoFrom
+from .forms import VideoFrom,SearchFrom
+widget_tweaks
+from django.forms.utils import ErrorList
+import urllib
+import requests
+YOUTUBE_API_key = 'AIzaSyDxWFYPA3FMztGFkCp32GrVsuZtP7YB6i4'
 
 
 def homepage(request):
@@ -62,4 +68,29 @@ class DeletedPlaylist(generic.DeleteView):
 
 def AddVideo(request, pk):
     forms = VideoFrom()
-    return render(request, 'addvideo.html', {'form': forms})
+    searchform = SearchFrom()
+    playlist = PlayList.objects.get(pk=pk)
+    if playlist.user == request.user:
+        raise Http404
+    form = VideoFrom(request.POST)
+    if form.is_valid():
+        video = Video()
+
+        video.url = form.cleaned_data['url']
+        video.playlist = playlist
+        parse_url = urllib.parse.urlparse(video.url)
+        video_id = urllib.parse.parse_qs(parse_url.query).get('v')
+        if video_id:
+            video.youtube_id = video_id[0]
+            print(video_id[0])
+            response=requests.get('https://youtube.googleapis.com/youtube/v3/videos?part=snippet&id={}&key={}'.format(video_id[0],YOUTUBE_API_key))
+            response=response.json()
+            title= response['items'][0]['snippet']['title']
+            video.title = title
+            video.save()
+            return redirect('detailsplaylist',pk)
+        else:
+            errors = form._errors.setdefault('url', ErrorList())
+            errors.append(u"Needs to be a YouTube URL")
+
+    return render(request, 'addvideo.html', {'form': forms,'searchform':searchform,'playlist':playlist})
