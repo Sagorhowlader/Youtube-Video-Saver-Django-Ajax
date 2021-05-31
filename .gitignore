@@ -127,3 +127,11 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+db.sqlite3
+
+.idea
+MyVideoList/migrations/*
+MyVideoList/__pycache__/*
+__pycache__/
+MyVideoList/__pycache__/*
+MyVideoList_Project/__pycache__/*

@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Create Playlist
+{% endblock title %}
+
+{% block content %}
+<div class="container">
+    <h1>Are you sure to deleted <a href="{% url 'detailsplaylist' playlist.id %}">{{playlist.title}}</a></h1>
+<form method="post">
+    {% csrf_token %}
+    {{form.as_p}}
+    <button type="submit" class="btn btn-danger">Delete</button>
+
+</form>
+
+
+</div>
+{% endblock content %}
