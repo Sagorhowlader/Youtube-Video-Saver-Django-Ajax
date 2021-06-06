@@ -7,7 +7,7 @@ from django.urls import reverse_lazy
 from django.views import generic
 from django.contrib.auth import authenticate, login
 from .forms import VideoFrom,SearchFrom
-widget_tweaks
+
 from django.forms.utils import ErrorList
 import urllib
 import requests
@@ -70,7 +70,9 @@ def AddVideo(request, pk):
     forms = VideoFrom()
     searchform = SearchFrom()
     playlist = PlayList.objects.get(pk=pk)
-    if playlist.user == request.user:
+    print(playlist.user)
+    print(playlist.user)
+    if playlist.user != request.user:
         raise Http404
     form = VideoFrom(request.POST)
     if form.is_valid():
@@ -82,7 +84,6 @@ def AddVideo(request, pk):
         video_id = urllib.parse.parse_qs(parse_url.query).get('v')
         if video_id:
             video.youtube_id = video_id[0]
-            print(video_id[0])
             response=requests.get('https://youtube.googleapis.com/youtube/v3/videos?part=snippet&id={}&key={}'.format(video_id[0],YOUTUBE_API_key))
             response=response.json()
             title= response['items'][0]['snippet']['title']
@@ -90,7 +91,7 @@ def AddVideo(request, pk):
             video.save()
             return redirect('detailsplaylist',pk)
         else:
-            errors = form._errors.setdefault('url', ErrorList())
-            errors.append(u"Needs to be a YouTube URL")
-
+            errors = form._errors.setdefault("url", ErrorList())
+            errors.append(u'Needs to be a YouTube URL')
+            print(form)
     return render(request, 'addvideo.html', {'form': forms,'searchform':searchform,'playlist':playlist})
