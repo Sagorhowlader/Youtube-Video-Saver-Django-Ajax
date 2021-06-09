@@ -6,6 +6,7 @@ Add Video
 
 {% block content %}
 <div class="container">
+    <h3>Add Video to {{playlist}}</h3>
 <form method="post">
     {% csrf_token %}
 
@@ -17,14 +18,25 @@ Add Video
       </div>
       {% endfor %}
 
-    <button type="submit" class="btn btn-primary">Save</button><br><br>
+    <button type="submit" class="btn btn-primary">Add</button><br><br>
 </form>
 
 
     <h3>OR</h3>
-        <form>
-        {{searchform.as_p}}
-        </form>
+        <form method="post">
+    {% csrf_token %}
+
+    {% for field in searchform %}
+      <div class="form-group">
+        {{ field.errors }}
+        {{ field.label_tag }}
+        {% render_field field class="form-control" %}
+      </div>
+      {% endfor %}
+
+</form>
+
+    <div id="search_form"></div>
 
 
 
